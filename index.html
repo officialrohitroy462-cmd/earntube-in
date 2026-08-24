@@ -91,6 +91,41 @@
 </div>
 </div>
 
+<!-- ===== 3 Page Footer Start - EarnTube by Rohit ===== -->
+<div style="padding:20px; margin-top:40px; border-top:1px solid #333; text-align:center; background:#111; color:#aaa; font-family:Arial; padding-bottom:80px;">
+  <div style="margin-bottom:12px;">
+    <a href="#" onclick="document.getElementById('aboutBox').style.display='block'; return false;" style="color:#fff; margin:0 12px; text-decoration:underline;">About Us</a>
+    <a href="#" onclick="document.getElementById('privacyBox').style.display='block'; return false;" style="color:#fff; margin:0 12px; text-decoration:underline;">Privacy Policy</a>
+    <a href="#" onclick="document.getElementById('contactBox').style.display='block'; return false;" style="color:#fff; margin:0 12px; text-decoration:underline;">Contact Us</a>
+  </div>
+  <div style="font-size:11px;">© 2026 EarnTube | Owner: Rohit Kumar Roy | officialrohitroy462@gmail.com</div>
+</div>
+
+<div id="aboutBox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999;">
+  <div style="background:#222; color:white; width:90%; max-width:400px; margin:60px auto; padding:25px; border-radius:12px; border:1px solid #444;">
+    <h2 style="margin-top:0;">About Us</h2>
+    <p style="font-size:13px; line-height:18px;">EarnTube ko Rohit Kumar Roy ne banaya hai. Ye ek video earning platform hai jaha user video dekh kar aur upload karke paisa kama sakte hai. Hamara maksad logo ko entertainment ke sath earning dena hai.</p>
+    <button onclick="document.getElementById('aboutBox').style.display='none'" style="padding:8px 20px; border-radius:6px; cursor:pointer; margin-top:10px;">Close</button>
+  </div>
+</div>
+
+<div id="privacyBox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999;">
+  <div style="background:#222; color:white; width:90%; max-width:400px; margin:60px auto; padding:25px; border-radius:12px; border:1px solid #444;">
+    <h2 style="margin-top:0;">Privacy Policy</h2>
+    <p style="font-size:13px; line-height:18px;">Hum aapka Email, UPI ID ya koi bhi personal data kisi ko share nahi karte. Aapka data EarnTube par 100% safe hai. Hum sirf earning dene ke liye aapka data use karte hai.</p>
+    <button onclick="document.getElementById('privacyBox').style.display='none'" style="padding:8px 20px; border-radius:6px; cursor:pointer; margin-top:10px;">Close</button>
+  </div>
+</div>
+
+<div id="contactBox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999;">
+  <div style="background:#222; color:white; width:90%; max-width:400px; margin:60px auto; padding:25px; border-radius:12px; border:1px solid #444;">
+    <h2 style="margin-top:0;">Contact Us</h2>
+    <p style="font-size:13px; line-height:18px;"><b>Owner:</b> Rohit Kumar Roy<br><b>Email:</b> officialrohitroy462@gmail.com<br><br>24 ghante ke andar reply milega.</p>
+    <button onclick="document.getElementById('contactBox').style.display='none'" style="padding:8px 20px; border-radius:6px; cursor:pointer; margin-top:10px;">Close</button>
+  </div>
+</div>
+<!-- ===== 3 Page Footer End ===== -->
+
 <script>
 const firebaseConfig = { apiKey: "AIzaSyBcXeSHmU-GAEUZHDXtLgihrTsOC6CRSfM", authDomain: "earntube-in.firebaseapp.com", projectId: "earntube-in", storageBucket: "earntube-in.firebasestorage.app", messagingSenderId: "564633227308", appId: "1:564633227308:web:1d25fa05b0691dfcd98189" };
 firebase.initializeApp(firebaseConfig);
