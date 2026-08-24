@@ -33,15 +33,13 @@
 </div>
 </div>
 
-<!-- AD SCREEN - SIRF YE NAYA HAI -->
 <div id="adScreen" class="hidden fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center p-4">
   <p class="text-[10px] tracking-widest text-zinc-500">ADVERTISEMENT</p>
   <div id="realAdBox" class="w-full max-w-[360px] min-h-[250px] bg-zinc-900 my-4 rounded-2xl border border-zinc-700 flex items-center justify-center">
-    <!-- 🔥 ADSTERRA KA CODE YAHAN PASTE KARNA HAI 🔥 -->
     <p class="text-[10px] text-zinc-600">Real AD Yahan Ayega</p>
   </div>
   <p class="text-6xl font-black" id="adTimer">5</p>
-  <p class="text-[11px] text-zinc-400 mt-2" id="adText">AD ke baad video chalega</p>
+  <p class="text-[11px] text-zinc-400 mt-2">AD ke baad video chalega</p>
 </div>
 
 <div id="msg" class="hidden text-center text-xs py-2 bg-green-600 text-white"></div>
@@ -51,7 +49,7 @@
 <p class="text-sm font-bold">YouTube Jaisa Login</p>
 <p class="text-[10px] text-zinc-400 mt-1">Guest: Video dekh sakta hai • Upload: Email chahiye</p>
 <button onclick="makeGoogle()" class="w-full mt-3 bg-white text-black py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2">
-<img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5"> Google se Login - Email Select
+<img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5"> Google se Login
 </button>
 <div class="text-center text-[10px] text-zinc-500 my-2">OR</div>
 <div class="flex gap-2">
@@ -72,12 +70,22 @@
 <button onclick="showChannel()"><div id="navID">👤<br>Login</div></button>
 </div>
 
-<div id="channelPopup" class="hidden fixed inset-0 bg-black z-50">
+<div id="channelPopup" class="hidden fixed inset-0 bg-black z-50 overflow-y-auto">
 <div class="max-w-[420px] mx-auto">
 <div class="p-3 flex gap-3 items-center border-b border-zinc-800"><button onclick="goHome()" class="w-8 h-8 bg-zinc-800 rounded-full">←</button><p id="chanName" class="font-bold">Profile</p><button onclick="logout()" class="ml-auto text-xs bg-zinc-800 px-3 py-1 rounded-full">Logout</button></div>
 <div class="p-4 text-center">
 <p class="text-2xl font-bold">₹<span id="mainWallet">0.00</span></p><p class="text-[10px] text-zinc-500">Wallet Balance</p>
-<p class="mt-4 text-xs">Videos: <span id="statVideos">0</span> • Views: <span id="statViews">0</span></p>
+
+<div class="mt-5 bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-left">
+<p class="text-sm font-bold">💸 UPI Withdraw</p>
+<p class="text-[10px] text-zinc-500 mt-1">Min. ₹50 - 24hr me payment</p>
+<input id="upiId" placeholder="aapka UPI - 98765@paytm" class="w-full mt-3 bg-black border border-zinc-700 rounded-full px-4 py-3 text-xs outline-none">
+<button onclick="requestWithdraw()" class="w-full mt-3 bg-[#FFD700] text-black py-3 rounded-full text-sm font-bold">Withdraw Karo</button>
+<p id="withdrawMsg" class="text-[10px] text-green-400 mt-2 text-center hidden"></p>
+<div id="withdrawHistory" class="mt-3 text-[10px] text-zinc-400"></div>
+</div>
+
+<p class="mt-6 text-xs text-left">Videos: <span id="statVideos">0</span> • Views: <span id="statViews">0</span></p>
 <div id="channelGrid" class="grid grid-cols-2 gap-3 mt-4"></div>
 </div>
 </div>
@@ -106,7 +114,7 @@ function updateWalletUI(){
 }
 function showMsg(t){let m=document.getElementById('msg');m.innerText=t;m.classList.remove('hidden');setTimeout(()=>m.classList.add('hidden'),3000);}
 function goHome(){document.getElementById('channelPopup').classList.add('hidden');}
-function showChannel(){document.getElementById('channelPopup').classList.remove('hidden'); renderMyVideos();}
+function showChannel(){document.getElementById('channelPopup').classList.remove('hidden'); renderMyVideos(); loadWithdrawHistory();}
 function logout(){localStorage.removeItem('EARN_ID'); auth.signOut(); location.reload();}
 function makeID(){
  let id=document.getElementById('uid').value.trim();
@@ -132,7 +140,7 @@ function makeGoogle(){
   document.getElementById('createBox').style.display='none';
   updateWalletUI();
   showMsg("Login ho gaya: "+email);
- }).catch(()=>{ alert("Firebase me Google Enable karo: Authentication > Sign-in method > Google"); });
+ }).catch(()=>{ alert("Firebase me Google Enable karo"); });
 }
 function extractYTId(link){
  try{
@@ -142,7 +150,7 @@ function extractYTId(link){
  }catch(e){return '';}
 }
 function addYTLink(){
- if(!currentID){ alert('Pehle Login karo - YouTube jaisa!'); document.getElementById('createBox').style.display='block'; return; }
+ if(!currentID){ alert('Pehle Login karo!'); document.getElementById('createBox').style.display='block'; return; }
  let link=document.getElementById('ytLink').value.trim();
  if(!link) return alert('Link dalo');
  let ytId=extractYTId(link);
@@ -151,11 +159,8 @@ function addYTLink(){
   document.getElementById('ytLink').value=''; showMsg('LIVE ho gaya!');
  });
 }
-
-// FINAL - OPTION 3 - SAME CODE + AD
 function openBigPlayer(ytId, docId, owner){
  tempYtId=ytId; currentPlayingId=docId; currentOwner=owner;
- // Pehle AD
  document.getElementById('adScreen').classList.remove('hidden');
  let t=5;
  document.getElementById('adTimer').innerText=t;
@@ -165,7 +170,6 @@ function openBigPlayer(ytId, docId, owner){
   if(t<=0){
    clearInterval(timer);
    document.getElementById('adScreen').classList.add('hidden');
-   // Video - TUMHARA PURANA CODE
    document.getElementById('bigPlayerWrap').classList.remove('hidden');
    document.getElementById('bigPlayer').src=`https://www.youtube.com/embed/${ytId}?autoplay=1`;
    document.getElementById('bigPlayerTitle').innerText=owner+" - Playing";
@@ -183,6 +187,30 @@ function earnFromBig(){
  localStorage.setItem('EARN_WALLETS_FINAL',JSON.stringify(wallets));
  updateWalletUI();
  showMsg('₹1 Mil gaya!');
+}
+function requestWithdraw(){
+ let upi = document.getElementById('upiId').value.trim();
+ if(!upi.includes('@')) return alert('Sahi UPI ID dalo jaise naam@paytm');
+ let bal = wallets[currentID]||0;
+ if(bal < 50) return alert('Kam se kam ₹50 chahiye! Abhi ₹'+bal.toFixed(2)+' hai');
+ wallets[currentID] = bal - 50;
+ localStorage.setItem('EARN_WALLETS_FINAL', JSON.stringify(wallets));
+ updateWalletUI();
+ db.collection("withdraws").add({user: currentID, upi: upi, amount: 50, time: Date.now(), status: "Pending"});
+ document.getElementById('withdrawMsg').innerText = '✅ ₹50 ka request bhej diya '+upi+' pe! 24hr me aayega';
+ document.getElementById('withdrawMsg').classList.remove('hidden');
+ loadWithdrawHistory();
+ showMsg('Withdraw Request Sent!');
+}
+function loadWithdrawHistory(){
+ if(!currentID) return;
+ db.collection("withdraws").where("user","==",currentID).orderBy("time","desc").limit(5).onSnapshot(snap=>{
+   let h = document.getElementById('withdrawHistory'); h.innerHTML='<p class="font-bold mt-2 text-white">History:</p>';
+   snap.forEach(d=>{
+     let w=d.data();
+     h.innerHTML+=`<div class="flex justify-between mt-1 border-b border-zinc-800 py-1"><span>₹${w.amount} to ${w.upi}</span><span class="${w.status=='Paid'?'text-green-400':'text-yellow-400'}">${w.status}</span></div>`;
+   });
+ });
 }
 db.collection("videos").orderBy("time","desc").onSnapshot(snap=>{
  videos=[]; snap.forEach(d=>videos.push({docId:d.id,...d.data()}));
@@ -210,4 +238,4 @@ function doSearch(val){
 }
 </script>
 </body>
-  </html>
+</html>
