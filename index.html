@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarnTube - YouTube Clone FINAL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+</head>
+<body class="max-w-[420px] mx-auto bg-black text-white min-h-screen">
+
+<div class="sticky top-0 z-40 bg-[#0f0f0f] border-b border-zinc-800">
+<div class="flex items-center justify-between px-3 py-2">
+<b class="text-white">Earn<span class="text-red-600">Tube</span></b>
+<div class="bg-zinc-800 px-3 py-1 rounded-full text-xs">₹<span id="topWallet">0.00</span></div>
+</div>
+<div class="flex gap-2 px-3 pb-2">
+<input id="searchBox" oninput="doSearch(this.value)" placeholder="Search channel..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-4 py-2 text-xs outline-none">
+</div>
+</div>
+
+<div id="bigPlayerWrap" class="hidden sticky top-[64px] z-30 bg-black border-b-2 border-red-600">
+<iframe id="bigPlayer" class="w-full h-[230px]" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+<div class="p-2 flex justify-between items-center bg-zinc-900">
+<p id="bigPlayerTitle" class="text-xs font-bold">Now Playing</p>
+<div class="flex gap-2">
+<button onclick="earnFromBig()" class="bg-red-600 px-3 py-1 rounded-full text-[10px] font-bold">₹1 Earn</button>
+<button onclick="closeBigPlayer()" class="bg-zinc-700 px-3 py-1 rounded-full text-[10px]">✕ Close</button>
+</div>
+</div>
+</div>
+
+<!-- AD SCREEN - SIRF YE NAYA HAI -->
+<div id="adScreen" class="hidden fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center p-4">
+  <p class="text-[10px] tracking-widest text-zinc-500">ADVERTISEMENT</p>
+  <div id="realAdBox" class="w-full max-w-[360px] min-h-[250px] bg-zinc-900 my-4 rounded-2xl border border-zinc-700 flex items-center justify-center">
+    <!-- 🔥 ADSTERRA KA CODE YAHAN PASTE KARNA HAI 🔥 -->
+    <p class="text-[10px] text-zinc-600">Real AD Yahan Ayega</p>
+  </div>
+  <p class="text-6xl font-black" id="adTimer">5</p>
+  <p class="text-[11px] text-zinc-400 mt-2" id="adText">AD ke baad video chalega</p>
+</div>
+
+<div id="msg" class="hidden text-center text-xs py-2 bg-green-600 text-white"></div>
+<div id="feed" class="pb-32 p-2"></div>
+
+<div id="createBox" class="fixed bottom-16 left-3 right-3 bg-zinc-900 p-4 rounded-2xl border border-zinc-700 z-30 max-w-[400px] mx-auto">
+<p class="text-sm font-bold">YouTube Jaisa Login</p>
+<p class="text-[10px] text-zinc-400 mt-1">Guest: Video dekh sakta hai • Upload: Email chahiye</p>
+<button onclick="makeGoogle()" class="w-full mt-3 bg-white text-black py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2">
+<img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5"> Google se Login - Email Select
+</button>
+<div class="text-center text-[10px] text-zinc-500 my-2">OR</div>
+<div class="flex gap-2">
+<input id="uid" placeholder="@Rohit" class="flex-1 bg-black border border-zinc-600 rounded-full px-4 py-2.5 text-sm outline-none">
+<button onclick="makeID()" class="bg-zinc-700 px-5 rounded-full text-xs font-bold">Set</button>
+</div>
+<div class="mt-4 border-t border-zinc-800 pt-3">
+<input id="ytLink" placeholder="YouTube link paste karo" class="w-full bg-black border border-zinc-700 rounded-full px-4 py-2.5 text-xs outline-none">
+<button onclick="addYTLink()" class="w-full mt-2 bg-white text-black py-2.5 rounded-full text-xs font-bold">+ Add Video LIVE</button>
+</div>
+</div>
+
+<div class="fixed bottom-0 left-0 right-0 bg-black border-t border-zinc-800 max-w-[420px] mx-auto z-40 flex justify-around py-2 text-[10px]">
+<button onclick="goHome()"><i class="fa fa-home"></i><br>Home</button>
+<button><i class="fa fa-fire text-red-500"></i><br>Shorts</button>
+<button onclick="document.getElementById('createBox').style.display='block'" class="bg-white text-black w-8 h-8 rounded-full font-bold">+</button>
+<button onclick="showChannel()"><i class="fa fa-wallet"></i><br>Wallet</button>
+<button onclick="showChannel()"><div id="navID">👤<br>Login</div></button>
+</div>
+
+<div id="channelPopup" class="hidden fixed inset-0 bg-black z-50">
+<div class="max-w-[420px] mx-auto">
+<div class="p-3 flex gap-3 items-center border-b border-zinc-800"><button onclick="goHome()" class="w-8 h-8 bg-zinc-800 rounded-full">←</button><p id="chanName" class="font-bold">Profile</p><button onclick="logout()" class="ml-auto text-xs bg-zinc-800 px-3 py-1 rounded-full">Logout</button></div>
+<div class="p-4 text-center">
+<p class="text-2xl font-bold">₹<span id="mainWallet">0.00</span></p><p class="text-[10px] text-zinc-500">Wallet Balance</p>
+<p class="mt-4 text-xs">Videos: <span id="statVideos">0</span> • Views: <span id="statViews">0</span></p>
+<div id="channelGrid" class="grid grid-cols-2 gap-3 mt-4"></div>
+</div>
+</div>
+</div>
+
+<script>
+const firebaseConfig = { apiKey: "AIzaSyBcXeSHmU-GAEUZHDXtLgihrTsOC6CRSfM", authDomain: "earntube-in.firebaseapp.com", projectId: "earntube-in", storageBucket: "earntube-in.firebasestorage.app", messagingSenderId: "564633227308", appId: "1:564633227308:web:1d25fa05b0691dfcd98189" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+let currentID=localStorage.getItem('EARN_ID')||'';
+let videos=[]; let wallets=JSON.parse(localStorage.getItem('EARN_WALLETS_FINAL')||'{}');
+let currentPlayingId=null; let currentOwner=null;
+let tempYtId=null;
+
+if(currentID){
+ document.getElementById('navID').innerText=currentID;
+ document.getElementById('chanName').innerText=currentID;
+ document.getElementById('createBox').style.display='none';
+ updateWalletUI();
+}
+function updateWalletUI(){
+ let w=wallets[currentID]||0;
+ document.getElementById('topWallet').innerText=w.toFixed(2);
+ document.getElementById('mainWallet').innerText=w.toFixed(2);
+}
+function showMsg(t){let m=document.getElementById('msg');m.innerText=t;m.classList.remove('hidden');setTimeout(()=>m.classList.add('hidden'),3000);}
+function goHome(){document.getElementById('channelPopup').classList.add('hidden');}
+function showChannel(){document.getElementById('channelPopup').classList.remove('hidden'); renderMyVideos();}
+function logout(){localStorage.removeItem('EARN_ID'); auth.signOut(); location.reload();}
+function makeID(){
+ let id=document.getElementById('uid').value.trim();
+ if(!id) return alert('Naam likho');
+ if(!id.startsWith('@')) id='@'+id;
+ currentID=id.replace(/\s+/g,"");
+ localStorage.setItem('EARN_ID',currentID);
+ document.getElementById('navID').innerText=currentID;
+ document.getElementById('chanName').innerText=currentID;
+ document.getElementById('createBox').style.display='none';
+ updateWalletUI();
+ showMsg("Channel ban gaya: "+currentID);
+}
+function makeGoogle(){
+ let provider = new firebase.auth.GoogleAuthProvider();
+ auth.signInWithPopup(provider).then((res)=>{
+  let email=res.user.email;
+  let autoID="@"+email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g,"");
+  currentID=autoID;
+  localStorage.setItem('EARN_ID',currentID);
+  document.getElementById('navID').innerText=currentID;
+  document.getElementById('chanName').innerText=currentID+" ("+email+")";
+  document.getElementById('createBox').style.display='none';
+  updateWalletUI();
+  showMsg("Login ho gaya: "+email);
+ }).catch(()=>{ alert("Firebase me Google Enable karo: Authentication > Sign-in method > Google"); });
+}
+function extractYTId(link){
+ try{
+  if(link.includes('v=')) return link.split('v=')[1].split('&')[0];
+  if(link.includes('youtu.be/')) return link.split('youtu.be/')[1].split('?')[0];
+  return link.split('/').pop().split('?')[0];
+ }catch(e){return '';}
+}
+function addYTLink(){
+ if(!currentID){ alert('Pehle Login karo - YouTube jaisa!'); document.getElementById('createBox').style.display='block'; return; }
+ let link=document.getElementById('ytLink').value.trim();
+ if(!link) return alert('Link dalo');
+ let ytId=extractYTId(link);
+ if(!ytId) return alert('Sahi link dalo');
+ db.collection("videos").add({ytId:ytId, owner:currentID, views:0, likes:0, time:Date.now()}).then(()=>{
+  document.getElementById('ytLink').value=''; showMsg('LIVE ho gaya!');
+ });
+}
+
+// FINAL - OPTION 3 - SAME CODE + AD
+function openBigPlayer(ytId, docId, owner){
+ tempYtId=ytId; currentPlayingId=docId; currentOwner=owner;
+ // Pehle AD
+ document.getElementById('adScreen').classList.remove('hidden');
+ let t=5;
+ document.getElementById('adTimer').innerText=t;
+ let timer=setInterval(()=>{
+  t--;
+  document.getElementById('adTimer').innerText=t;
+  if(t<=0){
+   clearInterval(timer);
+   document.getElementById('adScreen').classList.add('hidden');
+   // Video - TUMHARA PURANA CODE
+   document.getElementById('bigPlayerWrap').classList.remove('hidden');
+   document.getElementById('bigPlayer').src=`https://www.youtube.com/embed/${ytId}?autoplay=1`;
+   document.getElementById('bigPlayerTitle').innerText=owner+" - Playing";
+   db.collection("videos").doc(docId).update({views: firebase.firestore.FieldValue.increment(1)});
+   window.scrollTo({top:0, behavior:'smooth'});
+  }
+ },1000);
+}
+function closeBigPlayer(){ document.getElementById('bigPlayerWrap').classList.add('hidden'); document.getElementById('bigPlayer').src=""; }
+function earnFromBig(){
+ if(!currentID){ alert('Earn ke liye Login karo!'); return; }
+ if(!currentPlayingId) return;
+ wallets[currentID]=(wallets[currentID]||0)+1;
+ if(currentOwner!=currentID) wallets[currentOwner]=(wallets[currentOwner]||0)+0.6;
+ localStorage.setItem('EARN_WALLETS_FINAL',JSON.stringify(wallets));
+ updateWalletUI();
+ showMsg('₹1 Mil gaya!');
+}
+db.collection("videos").orderBy("time","desc").onSnapshot(snap=>{
+ videos=[]; snap.forEach(d=>videos.push({docId:d.id,...d.data()}));
+ let feed=document.getElementById('feed'); feed.innerHTML='';
+ if(videos.length==0){ feed.innerHTML='<div class="text-center mt-20 text-zinc-500 text-sm">Koi video nahi - + se add karo</div>'; return; }
+ videos.forEach(v=>{
+  feed.innerHTML+=`<div onclick="openBigPlayer('${v.ytId}','${v.docId}','${v.owner}')" class="flex gap-3 bg-zinc-900 mb-2 rounded-xl p-2 border border-zinc-800"><img src="https://img.youtube.com/vi/${v.ytId}/mqdefault.jpg" class="w-24 h-16 rounded-lg object-cover"><div><p class="text-xs font-bold">${v.owner}</p><p class="text-[10px] text-zinc-400">👁️ ${v.views} • Tap to Watch</p></div></div>`;
+ });
+ document.getElementById('statVideos').innerText=videos.filter(x=>x.owner==currentID).length;
+ document.getElementById('statViews').innerText=videos.filter(x=>x.owner==currentID).reduce((s,a)=>s+a.views,0);
+ renderMyVideos();
+});
+function renderMyVideos(){
+ let grid=document.getElementById('channelGrid'); if(!grid) return; grid.innerHTML='';
+ videos.filter(x=>x.owner==currentID).forEach(v=>{
+  grid.innerHTML+=`<div onclick="openBigPlayer('${v.ytId}','${v.docId}','${v.owner}');goHome();" class="bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800"><img src="https://img.youtube.com/vi/${v.ytId}/mqdefault.jpg" class="w-full h-20 object-cover"><p class="p-2 text-[10px]">👁️ ${v.views}</p></div>`;
+ });
+}
+function doSearch(val){
+ let feed=document.getElementById('feed');
+ let f=val? videos.filter(v=>v.owner.toLowerCase().includes(val.toLowerCase())):videos;
+ feed.innerHTML=''; f.forEach(v=>{
+  feed.innerHTML+=`<div onclick="openBigPlayer('${v.ytId}','${v.docId}','${v.owner}')" class="flex gap-3 bg-zinc-900 mb-2 rounded-xl p-2 border border-zinc-800"><img src="https://img.youtube.com/vi/${v.ytId}/mqdefault.jpg" class="w-24 h-16 rounded-lg"><div><p class="text-xs font-bold">${v.owner}</p><p class="text-[10px] text-zinc-400">👁️ ${v.views}</p></div></div>`;
+ });
+}
+</script>
+</body>
+  </html>
