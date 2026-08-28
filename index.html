@@ -2,48 +2,58 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WatchKaro 3.0 - EarnTube Pro</title>
+<title>WatchKaro 3.1 - Final</title>
 <script src="https://quge5.com/4/273446" type="text/javascript"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:sans-serif;padding-bottom:70px}
+body{background:#000;color:#fff;font-family:sans-serif;padding-bottom:80px}
 .header{position:sticky;top:0;z-index:99;background:#000;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1.5px solid #FFD700}
 .logo{display:flex;align-items:center;gap:10px}
 .icon-box{width:38px;height:38px;background:#000;border:1.5px solid #FFD700;border-radius:10px;display:grid;place-items:center}
 .icon-box span{color:#FFD700;font-weight:900}
 .logo b{color:#FFD700;font-size:16px}
 .wallet{background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;padding:7px 16px;border-radius:20px;font-weight:900;font-size:14px;cursor:pointer}
-.search{padding:10px 12px}
-.search input{width:100%;padding:12px;background:#111;border:1px solid #333;border-radius:25px;color:#fff;outline:none}
+.search{padding:10px 12px;display:flex;gap:8px}
+.search input{flex:1;padding:12px;background:#111;border:1px solid #333;border-radius:25px;color:#fff;outline:none}
+.yt-box{margin:10px 12px;background:#111;border:1px dashed #FFD700;border-radius:12px;padding:12px}
+.yt-box input{width:100%;padding:10px;background:#000;border:1px solid #333;border-radius:8px;color:#fff;margin:8px 0}
+.yt-box button{width:100%;background:#FFD700;color:#000;border:none;padding:10px;border-radius:8px;font-weight:900}
 .cats{display:flex;gap:8px;padding:10px 12px;overflow-x:auto}
 .cats span{background:#1a1a1a;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:13px;white-space:nowrap;cursor:pointer}
-.cats.active{background:#FFD700;color:#000;border-color:#FFD700;font-weight:700}
+.cats span.active{background:#FFD700;color:#000;border-color:#FFD700;font-weight:700}
 .card{margin:12px;background:#111;border-radius:12px;overflow:hidden;border:1px solid #222}
 .thumb{position:relative;width:100%;aspect-ratio:16/9;background:#181818;overflow:hidden;cursor:pointer}
 .thumb img{width:100%;height:100%;object-fit:cover}
 .earn-badge{position:absolute;top:8px;left:8px;background:#FFD700;color:#000;font-weight:900;padding:4px 10px;border-radius:6px;font-size:11px}
 .info{padding:10px;display:flex;gap:10px;align-items:center}
-.info.ch{width:36px;height:36px;background:#222;border-radius:50%;display:grid;place-items:center;border:1px solid #FFD700;color:#FFD700;flex-shrink:0}
+.ch{width:36px;height:36px;background:#222;border-radius:50%;display:grid;place-items:center;border:1px solid #FFD700;color:#FFD700;flex-shrink:0}
 .actions{display:flex;gap:15px;padding:0 10px 10px 56px;color:#999;font-size:13px}
 .actions span{cursor:pointer}
 .nav{position:fixed;bottom:0;left:0;right:0;background:#000;border-top:1px solid #333;display:flex;justify-content:space-around;padding:10px 0;z-index:100}
 .nav div{color:#777;font-size:11px;text-align:center;cursor:pointer}
-.nav.active{color:#FFD700}
+.nav div.active{color:#FFD700}
 .screen{display:none;position:fixed;inset:0;background:#000;z-index:200;padding:20px;overflow-y:auto}
 .earn-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#FFD700;color:#000;padding:20px 30px;border-radius:15px;font-weight:900;font-size:18px;z-index:300;display:none;animation:pop 0.5s}
 @keyframes pop{0%{scale:0}100%{scale:1}}
 #adScreen{position:fixed;inset:0;background:#000;z-index:250;display:none;place-items:center;text-align:center}
-.shorts-card{height:90vh;margin:10px;border-radius:15px;background:#111;display:grid;place-items:center;position:relative}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo"><div class="icon-box"><span>$▶</span></div><b>WATCHKARO 3.0</b></div>
+  <div class="logo"><div class="icon-box"><span>$▶</span></div><b>WATCHKARO 3.1</b></div>
   <div class="wallet" id="wallet" onclick="openWallet()">₹ 166</div>
 </div>
 
 <div class="search"><input id="searchBox" onkeyup="searchVideo()" placeholder="Search videos... 🔍"></div>
+
+<!-- YOUTUBE LINK BOX WAPAS -->
+<div class="yt-box">
+  <b style="color:#FFD700">🔗 YouTube Link se Video Add Karo</b>
+  <input id="ytLink" placeholder="YouTube link yaha paste karo...">
+  <input id="ytTitle" placeholder="Video Title likho...">
+  <button onclick="addYoutube()">ADD VIDEO + EARN ₹5</button>
+</div>
 
 <div class="cats" id="catBar">
   <span class="active" onclick="filterCat('All',this)">All</span>
@@ -53,105 +63,72 @@ body{background:#000;color:#fff;font-family:sans-serif;padding-bottom:70px}
   <span onclick="filterCat('Tech',this)">Tech 📱</span>
 </div>
 
-<div id="home"><div id="videoList"></div></div>
+<div id="videoList"></div>
 
 <div class="earn-popup" id="earnPopup">+₹2 Added! 💰</div>
+<div id="adScreen"><div><h2 style="color:#FFD700">Ad - 5 sec</h2><p id="adTimer" style="font-size:30px;margin:15px">5</p><p style="color:#999">Aapki earning ho rahi hai...</p></div></div>
 
-<div id="adScreen" class="hidden">
-  <div>
-    <h2 style="color:#FFD700">Ad - 5 sec</h2>
-    <p id="adTimer" style="font-size:30px;margin:15px">5</p>
-    <p style="color:#999">Aapki earning ho rahi hai...</p>
-  </div>
-</div>
-
-<!-- Wallet Screen -->
 <div class="screen" id="walletScreen">
   <h2 style="color:#FFD700">My Wallet 💰</h2>
   <div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;border-radius:15px;padding:20px;margin-top:20px;text-align:center">
-    <p>Total Earning</p><h1 style="font-size:40px" id="bigBal">₹ 166</h1><p id="stats">1,240 Views • 12 Videos</p>
+    <p>Total Earning</p><h1 style="font-size:40px" id="bigBal">₹ 166</h1><p id="stats">1,240 Views</p>
     <button onclick="alert('UPI Withdraw - ₹100 minimum!')" style="background:#000;color:#FFD700;border:none;padding:12px;width:100%;border-radius:10px;font-weight:900;margin-top:15px">WITHDRAW TO UPI</button>
   </div>
   <button onclick="closeAll()" style="margin-top:20px;background:#222;color:#fff;border:1px solid #333;padding:12px;width:100%;border-radius:10px">BACK TO HOME</button>
 </div>
 
-<!-- Shorts Screen -->
-<div class="screen" id="shortsScreen">
-  <h2 style="color:#FFD700">Shorts 🎬</h2>
-  <div class="shorts-card"><h3>Gaming Shorts #1<br><small style="color:#FFD700">Swipe Up for Next ⬆️</small></h3></div>
-  <div class="shorts-card"><h3>Earning Tips Shorts #2</h3></div>
-  <button onclick="closeAll()" style="margin-top:20px;background:#222;color:#fff;border:1px solid #333;padding:12px;width:100%;border-radius:10px">BACK</button>
-</div>
-
 <div class="nav">
   <div class="active" onclick="closeAll()">🏠<br>Home</div>
-  <div onclick="openShorts()">🎬<br>Shorts</div>
   <div onclick="document.getElementById('file').click()">⬆️<br>Upload</div>
   <div onclick="openWallet()">👛<br>Wallet</div>
 </div>
 
 <input type="file" id="file" accept="video/*" style="display:none" onchange="upload()">
-<input type="hidden" id="title" value="My New Video">
 
 <script>
-let bal=166, views=1240;
-let videos=[
-{title:"How to Earn Daily ₹500 | Best Method 2026", cat:"Earning", thumb:"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg", views:"1.2M"},
-{title:"BGMI Gaming - 1 vs 4 Clutch", cat:"Gaming", thumb:"https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg", views:"890K"},
-{title:"Funny Comedy Video 2026", cat:"Comedy", thumb:"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg", views:"2M"},
-{title:"Tech Review - Best Phone Under 15000", cat:"Tech", thumb:"https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg", views:"500K"}
-];
-let tempYtId=null, currentPlayingId=null, currentOwner=null;
+let bal=parseInt(localStorage.getItem('bal')||'166');
+let videos=JSON.parse(localStorage.getItem('myVideos')||'[]');
+if(videos.length==0){
+ videos=[
+  {title:"How to Earn Daily ₹500 | Best Method 2026", cat:"Earning", thumb:"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg", views:"1.2M", yt:"dQw4w9WgXcQ"},
+  {title:"BGMI Gaming - 1 vs 4 Clutch", cat:"Gaming", thumb:"https://i.ytimg.com/vi/jNQXAC9IVRw/hqdefault.jpg", views:"890K", yt:"jNQXAC9IVRw"},
+  {title:"Funny Comedy Video 2026", cat:"Comedy", thumb:"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg", views:"2M", yt:"dQw4w9WgXcQ"}
+ ];
+}
+document.getElementById('wallet').innerText='₹ '+bal;
+document.getElementById('bigBal').innerText='₹ '+bal;
 
+function save(){localStorage.setItem('myVideos',JSON.stringify(videos));localStorage.setItem('bal',bal)}
+function getYtId(url){let m=url.match(/(?:v=|youtu\.be\/)([^&]+)/);return m?m[1]:null;}
 function render(list){
-  let html="";
-  list.forEach((v,i)=>{
-    html+=`<div class="card" data-cat="${v.cat}" data-title="${v.title.toLowerCase()}">
-      <div class="thumb" onclick="openBigPlayer('${i}','${i}','You')"><img src="${v.thumb}"><div class="earn-badge">+₹2 / VIEW</div></div>
-      <div class="info"><div class="ch">${v.cat[0]}</div><div><h3 style="font-size:14px">${v.title}</h3><p style="color:#999;font-size:12px">${v.cat} • ${v.views} • <span style="color:#FFD700">Earning</span></p></div></div>
-      <div class="actions"><span onclick="like(this)">👍 Like</span><span onclick="shareVideo('${v.title}')">↗️ Share</span><span>💬 Comment</span></div>
-    </div>`;
-  });
-  document.getElementById('videoList').innerHTML=html;
+ let html=""; list.forEach((v,i)=>{
+  html+=`<div class="card"><div class="thumb" onclick="playAd()"><img src="${v.thumb}"><div class="earn-badge">+₹2 / VIEW</div></div><div class="info"><div class="ch">${v.cat[0]}</div><div><h3 style="font-size:14px">${v.title}</h3><p style="color:#999;font-size:12px">${v.cat} • ${v.views}</p></div></div><div class="actions"><span>👍 Like</span><span>↗️ Share</span></div></div>`;
+ }); document.getElementById('videoList').innerHTML=html;
 }
 render(videos);
-
-function openBigPlayer(ytId, docId, owner){
-window.open('https://quge5.com/4/273446', '_blank');
-tempYtId=ytId; currentPlayingId=docId; currentOwner=owner;
-document.getElementById('adScreen').style.display='grid';
-let c=5; let timer=document.getElementById('adTimer');
-let iv=setInterval(()=>{
- c--; timer.innerText=c;
- if(c<=0){ clearInterval(iv); document.getElementById('adScreen').style.display='none'; doEarn(); }
-},1000);
+function playAd(){
+ window.open('https://quge5.com/4/273446','_blank');
+ document.getElementById('adScreen').style.display='grid';
+ let c=5; let timer=document.getElementById('adTimer');
+ let iv=setInterval(()=>{c--;timer.innerText=c;if(c<=0){clearInterval(iv);document.getElementById('adScreen').style.display='none';bal+=2;document.getElementById('wallet').innerText='₹ '+bal;document.getElementById('bigBal').innerText='₹ '+bal;save();let pop=document.getElementById('earnPopup');pop.style.display='block';setTimeout(()=>pop.style.display='none',2000);}},1000);
 }
-function doEarn(){
- bal+=2; views+=1;
- document.getElementById('wallet').innerText='₹ '+bal;
- document.getElementById('bigBal').innerText='₹ '+bal;
- document.getElementById('stats').innerText=views+' Views • '+(videos.length)+' Videos';
- let pop=document.getElementById('earnPopup'); pop.style.display='block';
- setTimeout(()=>pop.style.display='none',2000);
+function addYoutube(){
+ let link=document.getElementById('ytLink').value; let title=document.getElementById('ytTitle').value||'My YouTube Video';
+ let id=getYtId(link); if(!id){alert('Sahi YouTube link dalo!');return;}
+ let thumb=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+ videos.unshift({title:title, cat:"Earning", thumb:thumb, views:"Just now", yt:id});
+ save(); render(videos); bal+=5; document.getElementById('wallet').innerText='₹ '+bal; document.getElementById('bigBal').innerText='₹ '+bal; save();
+ alert('Video Added + ₹5 Earning!'); document.getElementById('ytLink').value=''; document.getElementById('ytTitle').value='';
 }
-function filterCat(cat,el){
- document.querySelectorAll('.cats span').forEach(s=>s.classList.remove('active')); el.classList.add('active');
- if(cat=='All') render(videos); else render(videos.filter(v=>v.cat==cat));
-}
-function searchVideo(){
- let q=document.getElementById('searchBox').value.toLowerCase();
- render(videos.filter(v=>v.title.toLowerCase().includes(q)));
-}
-function openWallet(){ document.getElementById('walletScreen').style.display='block'; }
-function openShorts(){ document.getElementById('shortsScreen').style.display='block'; }
-function closeAll(){ document.getElementById('walletScreen').style.display='none'; document.getElementById('shortsScreen').style.display='none'; }
-function like(el){ el.innerText='❤️ Liked'; el.style.color='#FFD700'; }
-function shareVideo(t){ navigator.clipboard.writeText(t); alert('Link Copied: '+t); }
 function upload(){
- let f=document.getElementById('file').files[0]; if(!f){ alert('Video chuno!'); return; }
- let u=URL.createObjectURL(f); videos.unshift({title:document.getElementById('title').value||'My Video', cat:"Earning", thumb:"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg", views:"Just now", url:u});
- render(videos); doEarn(); alert('Video Uploaded!');
+ let f=document.getElementById('file').files[0]; if(!f)return;
+ let u=URL.createObjectURL(f); videos.unshift({title:'My Uploaded Video', cat:"Gaming", thumb:"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg", views:"Just now", yt:"dQw4w9WgXcQ", url:u});
+ save(); render(videos); bal+=2; save(); alert('Uploaded!');
 }
+function filterCat(cat,el){document.querySelectorAll('.cats span').forEach(s=>s.classList.remove('active'));el.classList.add('active');if(cat=='All')render(videos);else render(videos.filter(v=>v.cat==cat));}
+function searchVideo(){let q=document.getElementById('searchBox').value.toLowerCase();render(videos.filter(v=>v.title.toLowerCase().includes(q)));}
+function openWallet(){document.getElementById('walletScreen').style.display='block';}
+function closeAll(){document.getElementById('walletScreen').style.display='none';}
 </script>
 </body>
 </html>
